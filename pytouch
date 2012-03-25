@@ -21,7 +21,7 @@ class WordMaker(object):
         return self._level
 
 
-if __name_ == '__main__':
+if __name__ == '__main__':
     w = WordMaker()
     print w.letter()
 
