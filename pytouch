@@ -1,6 +1,30 @@
 #!/usr/bin/env python
+import random
 
 class WordMaker(object):
     def __init__(self):
-        self.letterList = " fjdkslahgyturieowpqbnvmcxz"
+        '''Create the object'''
+        self._letterList = " fjdkslahgyturieowpqbnvmcxz"
+        self._level = 0
 
+    def levelUp(self):
+        '''Increase the level of the typer. Adds an extra letter'''
+        if not self._level >= len(self._letterList):
+            self._level += 1
+
+    def letter(self):
+        '''Return a random letter based on the level'''
+        return random.choice([c for c in self._letterList[:self.level]])
+        
+    @property
+    def level(self):
+        return self._level
+
+
+if __name_ == '__main__':
+    w = WordMaker()
+    print w.letter()
+
+    w.levelUp()
+
+    print w.letter()
