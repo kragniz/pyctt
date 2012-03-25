@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+class WordMaker(object):
+    def __init__(self):
+        self.letterList = " fjdkslahgyturieowpqbnvmcxz"
+
