@@ -1,21 +1,32 @@
 #!/usr/bin/env python
 import random
 import curses
+import time
 
 class WordMaker(object):
     def __init__(self):
         '''Create the object'''
-        self._letterList = " fjdkslahgyturieowpqbnvmcxz"
+        self._letterList = "fjdkslahgyturieowpqbnvmcxz"
         self._level = 1
 
-    def levelUp(self):
+    def level_up(self):
         '''Increase the level of the typer. Adds an extra letter'''
         if not self._level >= len(self._letterList):
             self._level += 1
 
-    def letter(self):
+    def letter(self, space=True):
         '''Return a random letter based on the level'''
-        return random.choice([c for c in self._letterList[:self.level]])
+        if random.randint(0, 8) == 1 and space:
+            return ' ' #return a space character with a lower frequency
+        else:
+            return random.choice([c for c in self._letterList[:self.level]])
+
+    def string(self, length):
+        '''Return a string containing letters based on the level'''
+        s = ''
+        for i in range(length):
+            s += self.letter()
+        return s
         
     @property
     def level(self):
@@ -25,12 +36,38 @@ class Display(object):
     def __init__(self, screen):
         self.screen = screen
 
+        curses.curs_set(1) #disable the cursor
+        self.screen.timeout(0)
+
+        #set up some colours
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE) #black on white
+        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_RED)   #black on red
+        curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_GREEN) #black on green
+
+        for i in range(3):
+            self._draw_chr(self.screen_size, i, 3)
+            time.sleep(1)
+        
+    def _refresh(self):
+        '''Refresh the terminal'''
+        self.screen.refresh()
+
+    def _draw_chr(self, c, x, y):
+        self.screen.addstr(y, x, str(c), curses.color_pair(1))
+        self._refresh()
+
+    @property
+    def screen_size(self):
+        return curses.COLS, curses.LINES
+
 
 if __name__ == '__main__':
+    def main(stdscr):
+        '''Small function used with curses.wrapper'''
+        return Display(stdscr)
+
     w = WordMaker()
-    print w.letter()
+    w.level_up()
 
-    for i in range(7):
-        w.levelUp()
-
-    print w.letter()
+    curses.wrapper(main) #use the safe curses wrapper in case things get bad
+    print  w.string(10)
